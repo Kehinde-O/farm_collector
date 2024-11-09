@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "farms")
@@ -18,9 +19,11 @@ public class Farm {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Farm name is required")
     @Column(unique = true, nullable = false)
     private String name;
 
-    @Column(nullable = true)
+    @NotBlank(message = "Location is required")
+    @Column(nullable = false)
     private String location;
 }
