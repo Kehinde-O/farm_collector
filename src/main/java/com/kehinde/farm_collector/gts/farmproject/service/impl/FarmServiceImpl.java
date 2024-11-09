@@ -50,8 +50,8 @@ public class FarmServiceImpl implements FarmService {
         Season season = seasonRepository.findById(request.getSeasonId())
                 .orElseThrow(() -> new RuntimeException("Season not found with id: " + request.getSeasonId()));
 
-        Field field = fieldRepository.findByNameAndFarm(request.getFieldName(), request.getFarmName())
-                .orElseThrow(() -> new RuntimeException("Field not found for name: " + request.getFieldName()));
+        Field field = fieldRepository.findById(request.getFieldId())
+                .orElseThrow(() -> new RuntimeException("Field not found with id: " + request.getFieldId()));
 
         CropData cropData = new CropData();
         cropData.setField(field);
@@ -69,8 +69,8 @@ public class FarmServiceImpl implements FarmService {
         Season season = seasonRepository.findById(request.getSeasonId())
                 .orElseThrow(() -> new RuntimeException("Season not found with id: " + request.getSeasonId()));
 
-        Field field = fieldRepository.findByNameAndFarm(request.getFieldName(), request.getFarmName())
-                .orElseThrow(() -> new RuntimeException("Field not found for name: " + request.getFieldName()));
+        Field field = fieldRepository.findById(request.getFieldId())
+                .orElseThrow(() -> new RuntimeException("Field not found with id: " + request.getFieldId()));
 
         CropData cropData = new CropData();
         cropData.setField(field);

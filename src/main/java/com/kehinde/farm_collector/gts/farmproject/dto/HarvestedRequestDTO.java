@@ -8,19 +8,17 @@ import javax.validation.constraints.Positive;
 
 @Data
 public class HarvestedRequestDTO {
-    @NotBlank(message = "Farm name is required")
-    private String farmName;
+    @NotNull(message = "Farm ID is required")
+    private Long farmId;
 
-    @NotBlank(message = "Field name is required")
-    private String fieldName;
+    @NotNull(message = "Field ID is required")
+    private Long fieldId;
 
     @NotNull(message = "Season ID is required")
     private Long seasonId;
 
-    @NotBlank(message = "Crop type is required")
     private String cropType;
 
-    @NotNull(message = "Actual amount is required")
     @Positive(message = "Actual amount must be greater than 0")
     private Double actualAmount;
 }
