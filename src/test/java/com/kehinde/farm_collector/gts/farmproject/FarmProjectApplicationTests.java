@@ -1,6 +1,7 @@
 package com.kehinde.farm_collector.gts.farmproject;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.kehinde.farm_collector.gts.farmproject.config.LoggingFilter;
 import com.kehinde.farm_collector.gts.farmproject.controller.FarmController;
 import com.kehinde.farm_collector.gts.farmproject.dto.FarmReportDTO;
 import com.kehinde.farm_collector.gts.farmproject.dto.HarvestedRequestDTO;
@@ -8,9 +9,13 @@ import com.kehinde.farm_collector.gts.farmproject.dto.PlantedRequestDTO;
 import com.kehinde.farm_collector.gts.farmproject.dto.SeasonReportDTO;
 import com.kehinde.farm_collector.gts.farmproject.entity.Farm;
 import com.kehinde.farm_collector.gts.farmproject.service.FarmService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,9 +25,16 @@ import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.servlet.FilterChain;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Base64;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.*;
 
+import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
