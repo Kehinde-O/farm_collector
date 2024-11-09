@@ -1,5 +1,7 @@
 package com.kehinde.farm_collector.gts.farmproject.controller;
 
+import com.kehinde.farm_collector.gts.farmproject.dto.HarvestedRequestDTO;
+import com.kehinde.farm_collector.gts.farmproject.dto.PlantedRequestDTO;
 import com.kehinde.farm_collector.gts.farmproject.entity.Farm;
 import com.kehinde.farm_collector.gts.farmproject.service.FarmService;
 import lombok.RequiredArgsConstructor;
@@ -34,4 +36,22 @@ public class FarmController {
         Farm farm = farmService.getFarmById(id);
         return ResponseEntity.ok(farm);
     }
+
+    @PostMapping("/planted")
+    public ResponseEntity<String> submitPlantedData(@Valid @RequestBody PlantedRequestDTO request) {
+        farmService.addPlantedData(request);
+        return new ResponseEntity<>("Planted data submitted successfully", HttpStatus.CREATED);
+    }
+
+    @PostMapping("/harvested")
+    public ResponseEntity<String> submitHarvestedData(@Valid @RequestBody HarvestedRequestDTO request) {
+        farmService.addHarvestedData(request);
+        return new ResponseEntity<>("Harvested data submitted successfully", HttpStatus.CREATED);
+    }
+
+//    @GetMapping("/reports/season/{seasonId}")
+//    public ResponseEntity<ReportResponseDTO> getSeasonReport(@PathVariable Long seasonId) {
+//        ReportResponseDTO report = farmService.generateReport(seasonId);
+//        return ResponseEntity.ok(report);
+//    }
 }
