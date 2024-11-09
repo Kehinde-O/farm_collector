@@ -42,7 +42,3 @@ public class CropData {
     private DataType dataType;
 }
 
-public enum DataType {
-    PLANTED,
-    HARVESTED
-}
