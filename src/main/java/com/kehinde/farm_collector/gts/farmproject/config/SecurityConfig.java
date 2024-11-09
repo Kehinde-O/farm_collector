@@ -20,11 +20,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/api/v1/farms/**").authenticated()
-                .anyRequest().permitAll()
+                .antMatchers("/api/v1/farms/**").hasRole("ADMIN") // Example: Restrict these endpoints to ADMIN role
+                .anyRequest().authenticated()
                 .and()
                 .httpBasic();
         return http.build();
+//        http.csrf().disable() // Disable CSRF only for testing purposes
+//                .authorizeRequests()
+//                .antMatchers("/api/v1/farms/**").hasRole("ADMIN") // Example: Restrict these endpoints to ADMIN role
+//                .anyRequest().authenticated()
+//                .and().httpBasic(); // Use basic auth for testing
     }
 
     @Bean

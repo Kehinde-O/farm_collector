@@ -1,7 +1,9 @@
 package com.kehinde.farm_collector.gts.farmproject.service.impl;
 
+import com.kehinde.farm_collector.gts.farmproject.dto.FarmReportDTO;
 import com.kehinde.farm_collector.gts.farmproject.dto.HarvestedRequestDTO;
 import com.kehinde.farm_collector.gts.farmproject.dto.PlantedRequestDTO;
+import com.kehinde.farm_collector.gts.farmproject.dto.SeasonReportDTO;
 import com.kehinde.farm_collector.gts.farmproject.entity.*;
 import com.kehinde.farm_collector.gts.farmproject.exception.ResourceNotFoundException;
 import com.kehinde.farm_collector.gts.farmproject.repository.CropDataRepository;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -82,4 +85,40 @@ public class FarmServiceImpl implements FarmService {
         cropDataRepository.save(cropData);
     }
 
+    @Override
+    public SeasonReportDTO generateSeasonReport(Long seasonId) {
+        Season season = seasonRepository.findById(seasonId)
+                .orElseThrow(() -> new RuntimeException("Season not found with id: " + seasonId));
+
+        List<CropData> cropDataList = cropDataRepository.findBySeason(season);
+
+        // Group by farm and crop type, then calculate expected and actual amounts
+        List<FarmReportDTO> farmReports = cropDataList.stream()
+                .collect(Collectors.groupingBy(data -> data.getField().getFarm().getId()))
+                .entrySet().stream()
+                .flatMap(entry -> entry.getValue().stream()
+                        .collect(Collectors.groupingBy(CropData::getCropType))
+                        .entrySet().stream()
+                        .map(cropEntry -> {
+                            Long farmId = entry.getKey();
+                            String farmName = cropEntry.getValue().get(0).getField().getFarm().getName();
+                            Long fieldId = cropEntry.getValue().get(0).getField().getId();
+                            String cropType = cropEntry.getKey();
+
+                            double expectedAmount = cropEntry.getValue().stream()
+                                    .filter(data -> data.getDataType() == DataType.PLANTED)
+                                    .mapToDouble(CropData::getExpectedAmount)
+                                    .sum();
+
+                            double actualAmount = cropEntry.getValue().stream()
+                                    .filter(data -> data.getDataType() == DataType.HARVESTED)
+                                    .mapToDouble(CropData::getActualAmount)
+                                    .sum();
+
+                            return new FarmReportDTO(farmId, farmName, fieldId, cropType, expectedAmount, actualAmount);
+                        }))
+                .collect(Collectors.toList());
+
+        return new SeasonReportDTO(season.getId(), season.getName(), farmReports);
+    }
 }
